@@ -1,0 +1,588 @@
+/* ==========================================================
+   GOLDEN CRUST BAKERY & CAFÉ — styles.css
+   ==========================================================
+   TEACHING NOTES
+   This stylesheet is written MOBILE-FIRST:
+   - The base rules (no media query) target small screens.
+   - We then ADD rules inside min-width media queries to adjust
+     the layout as the screen gets bigger.
+   Mobile-first is the modern standard because most visitors to
+   most websites are on a phone, so we design for that reality
+   first and treat "desktop" as an enhancement, not the default.
+   ========================================================== */
+
+
+/* ----------------------------------------------------------
+   1) CSS CUSTOM PROPERTIES (VARIABLES)
+   Defining colours/fonts/spacing once at the top means the
+   whole site's look can be changed by editing a handful of
+   values here, instead of hunting through every rule.
+   ---------------------------------------------------------- */
+:root {
+  /* Colour palette */
+  --color-bg: #FBF8F3;          /* warm off-white page background */
+  --color-surface: #FFFFFF;     /* cards, header, form background */
+  --color-text: #2B1B12;        /* deep espresso brown — main text */
+  --color-text-muted: #6B5C4F;  /* softer brown for secondary text */
+  --color-accent: #C17817;      /* warm amber/honey — buttons, links */
+  --color-accent-dark: #96600F; /* darker amber for hover states */
+  --color-secondary: #4A6350;   /* sage green — small accents */
+  --color-border: #E7DFD3;      /* light hairline borders */
+  --color-error: #B3261E;       /* form validation errors */
+
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, serif;   /* headings */
+  --font-body: 'Work Sans', Arial, sans-serif;  /* body text */
+
+  /* Spacing scale — reused everywhere instead of "random" pixel values */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+  --space-xl: 6rem;
+
+  /* Shared layout values */
+  --container-width: 1140px;
+  --radius: 10px;
+}
+
+
+/* ----------------------------------------------------------
+   2) RESET / BASE STYLES
+   Browsers ship with inconsistent default spacing and sizing.
+   This small reset makes every browser start from the same
+   baseline so our layout behaves predictably everywhere.
+   ---------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  /* border-box means padding/border are INCLUDED in an element's
+     width, instead of added on top of it. This is the single
+     change that makes CSS layout maths sane — almost every
+     real project sets this. */
+  box-sizing: border-box;
+}
+
+html {
+  /* Smooth-scrolls the page when we jump to an #id anchor
+     (like clicking a nav link). One line, no JavaScript needed. */
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.6; /* generous line-height = easier reading */
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  /* Prevents images from ever overflowing their container —
+     this single rule is doing a lot of responsiveness work. */
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--color-accent-dark);
+  text-decoration: none;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: 1.15;
+  margin: 0 0 var(--space-sm);
+}
+
+p {
+  margin: 0 0 var(--space-sm);
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+  Visible keyboard focus styling. Many sites accidentally hide
+  this with "outline: none" for aesthetics — don't do that. Some
+  visitors navigate entirely by keyboard (Tab key) and need a
+  clear indicator of which element is currently focused.
+*/
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+/*
+  Respect visitors who have asked their OS for reduced motion
+  (an accessibility setting for motion sensitivity). We turn our
+  smooth-scroll and transitions off for them.
+*/
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    transition: none !important;
+  }
+}
+
+
+/* ----------------------------------------------------------
+   3) LAYOUT HELPERS
+   ---------------------------------------------------------- */
+.container {
+  /* A "container" centres content and stops it stretching edge
+     to edge on wide screens. Reused on every section. */
+  width: 100%;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--space-sm);
+}
+
+.eyebrow {
+  /* Small label text that sits above a heading, e.g. "Our story" */
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.center {
+  text-align: center;
+}
+
+
+/* ----------------------------------------------------------
+   4) BUTTONS
+   ---------------------------------------------------------- */
+.btn {
+  display: inline-block;
+  padding: 0.85em 1.6em;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-accent);
+  color: #fff;
+}
+.btn-primary:hover {
+  background-color: var(--color-accent-dark);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border-color: var(--color-text);
+  color: var(--color-text);
+}
+.btn-secondary:hover {
+  background-color: var(--color-text);
+  color: #fff;
+}
+
+
+/* ----------------------------------------------------------
+   5) HEADER / NAVIGATION
+   ---------------------------------------------------------- */
+.site-header {
+  position: sticky; /* stays visible while the visitor scrolls down */
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-xs);
+  padding-bottom: var(--space-xs);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: var(--color-text);
+}
+
+/* --- The hamburger button (mobile only) --- */
+.nav-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.nav-toggle-bar {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-text);
+}
+
+/* --- The nav links themselves ---
+   On MOBILE, we hide this list off-canvas by default and only
+   reveal it when JS adds the .is-open class (see script.js).
+   This is a very common responsive-nav pattern: CSS handles the
+   look of "open" vs "closed", JS just toggles a class name. */
+.primary-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(75vw, 300px);
+  background-color: var(--color-surface);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+  padding: var(--space-xl) var(--space-md);
+  transform: translateX(100%); /* pushed off-screen to the right */
+  transition: transform 0.25s ease;
+}
+.primary-nav.is-open {
+  transform: translateX(0); /* slides into view */
+}
+.primary-nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.primary-nav a {
+  font-weight: 500;
+  color: var(--color-text);
+}
+.nav-cta {
+  color: var(--color-accent-dark) !important;
+}
+/* Added by JS (script.js FEATURE 2) to the nav link matching
+   whichever section is currently scrolled into view. */
+.active-link {
+  color: var(--color-accent-dark);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ---- TABLET / DESKTOP NAV (900px and wider) ----
+   Above 900px we have enough horizontal room for a normal
+   inline menu, so we undo the "off-canvas drawer" styles and
+   hide the hamburger button entirely. */
+@media (min-width: 900px) {
+  .nav-toggle {
+    display: none;
+  }
+  .primary-nav {
+    position: static;
+    height: auto;
+    width: auto;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    transform: none;
+  }
+  .primary-nav ul {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-md);
+  }
+}
+
+
+/* ----------------------------------------------------------
+   6) HERO SECTION
+   ---------------------------------------------------------- */
+.hero {
+  padding: var(--space-lg) 0;
+}
+.hero-inner {
+  display: flex;
+  flex-direction: column; /* image stacks under text on mobile */
+  gap: var(--space-md);
+}
+.hero-text h1 {
+  font-size: clamp(2rem, 6vw, 3.4rem); /* fluid font size: scales with viewport, bounded by min/max */
+}
+.hero-lede {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  max-width: 46ch; /* "ch" = character width, keeps paragraph lines readable */
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.hero-image img {
+  border-radius: var(--radius);
+}
+
+@media (min-width: 900px) {
+  .hero-inner {
+    flex-direction: row; /* side-by-side once there's room */
+    align-items: center;
+  }
+  .hero-text,
+  .hero-image {
+    flex: 1;
+  }
+}
+
+
+/* ----------------------------------------------------------
+   7) ABOUT SECTION
+   ---------------------------------------------------------- */
+.about {
+  padding: var(--space-lg) 0;
+  background-color: var(--color-surface);
+}
+.about-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.about-image img {
+  border-radius: var(--radius);
+}
+.about-points li {
+  padding-left: 1.4em;
+  position: relative;
+  margin-bottom: var(--space-xs);
+}
+.about-points li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+@media (min-width: 900px) {
+  .about-inner {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+  .about-image,
+  .about-text {
+    flex: 1;
+  }
+}
+
+
+/* ----------------------------------------------------------
+   8) MENU SECTION (CSS GRID)
+   ---------------------------------------------------------- */
+.menu {
+  padding: var(--space-lg) 0;
+}
+.menu-grid {
+  display: grid;
+  /* One column on mobile by default */
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+.menu-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  padding-bottom: var(--space-sm);
+}
+.menu-card img {
+  aspect-ratio: 4 / 3; /* keeps a consistent photo shape however wide the card is */
+  object-fit: cover;
+  margin-bottom: var(--space-sm);
+}
+.menu-card h3,
+.menu-card p {
+  padding-left: var(--space-sm);
+  padding-right: var(--space-sm);
+}
+.price {
+  font-weight: 600;
+  color: var(--color-accent-dark);
+}
+
+/* Two columns once a tablet has the width to spare */
+@media (min-width: 600px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* Three columns on full desktop */
+@media (min-width: 900px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+/* ----------------------------------------------------------
+   9) TESTIMONIALS
+   ---------------------------------------------------------- */
+.testimonials {
+  padding: var(--space-lg) 0;
+  background-color: var(--color-surface);
+}
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+.testimonial {
+  margin: 0;
+  padding: var(--space-md);
+  background-color: var(--color-bg);
+  border-left: 4px solid var(--color-accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.testimonial p {
+  font-style: italic;
+  margin-bottom: var(--space-xs);
+}
+.testimonial cite {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 900px) {
+  .testimonial-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+/* ----------------------------------------------------------
+   10) CONTACT SECTION + FORM
+   ---------------------------------------------------------- */
+.contact {
+  padding: var(--space-lg) 0;
+}
+.contact-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+.contact-info address {
+  font-style: normal;
+  margin: var(--space-sm) 0;
+  line-height: 1.9;
+}
+.hours {
+  color: var(--color-text-muted);
+}
+
+.contact-form {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+}
+.form-field {
+  margin-bottom: var(--space-sm);
+}
+.form-field label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.3em;
+}
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 0.7em;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+/* Styling applied automatically by the BROWSER when a field
+   fails HTML's built-in validation (e.g. an empty required
+   field, or text that isn't a valid email address). */
+.form-field input:invalid:not(:placeholder-shown) {
+  border-color: var(--color-error);
+}
+.field-error {
+  display: block;
+  min-height: 1.2em; /* reserves space so the layout doesn't jump when an error appears */
+  color: var(--color-error);
+  font-size: 0.85rem;
+  margin-top: 0.25em;
+}
+.form-status {
+  margin-top: var(--space-sm);
+  font-weight: 600;
+}
+.form-status.success {
+  color: var(--color-secondary);
+}
+.form-status.error {
+  color: var(--color-error);
+}
+
+@media (min-width: 900px) {
+  .contact-inner {
+    flex-direction: row;
+  }
+  .contact-info,
+  .contact-form {
+    flex: 1;
+  }
+}
+
+
+/* ----------------------------------------------------------
+   11) FOOTER
+   ---------------------------------------------------------- */
+.site-footer {
+  padding: var(--space-md) 0;
+  background-color: var(--color-text);
+  color: #fff;
+}
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: center;
+  text-align: center;
+}
+.footer-inner p {
+  margin: 0;
+  color: #E7DFD3;
+}
+.back-to-top {
+  color: #fff;
+  font-weight: 600;
+}
+
+@media (min-width: 600px) {
+  .footer-inner {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  GOLDEN CRUST BAKERY & CAFÉ — example small-business website
+  ============================================================
+  This file is a TEACHING EXAMPLE. It shows a class how a real
+  small-business site is put together using nothing but plain
+  HTML, CSS and JavaScript (no frameworks, no build tools).
+
+  The three files work together:
+    index.html   -> structure/content (this file)
+    styles.css   -> presentation (colours, layout, responsiveness)
+    script.js    -> behaviour (menu toggle, form check, etc.)
+
+  Read the comments as you go — they explain the WHY, not just
+  the WHAT, because that's the part beginners usually miss.
+-->
+<html lang="en">
+<head>
+  <!--
+    1) CHARACTER SET & VIEWPORT
+    These two tags should be the first two lines inside <head>.
+    - charset=UTF-8 lets the page use special characters (é, —, etc.)
+      correctly instead of showing garbled symbols.
+    - the viewport tag is what makes RESPONSIVE design possible.
+      Without it, mobile browsers fake a desktop-width screen and
+      then shrink the page down, which breaks all our media queries.
+      "width=device-width" = "use the phone's real width"
+      "initial-scale=1.0"  = "don't zoom in/out by default"
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!--
+    2) THE <title> TAG
+    This is what shows up in the browser tab AND as the clickable
+    blue headline in Google search results. Good SEO practice:
+    keep it under ~60 characters and put the most important
+    keywords first (business type/name), then location.
+  -->
+  <title>Golden Crust Bakery &amp; Café | Fresh Bread &amp; Coffee in Accra</title>
+
+  <!--
+    3) BASIC ON-PAGE SEO META TAGS
+    Search engines and social platforms read these tags to decide
+    HOW to describe/preview your page. None of this is visible on
+    the page itself — it's all "metadata" (data about the page).
+  -->
+  <!-- Shown as the grey snippet text under your title in Google. Aim for 150-160 characters. -->
+  <meta name="description" content="Golden Crust Bakery & Café bakes fresh sourdough, pastries and coffee daily in Accra. Order ahead, visit our café, or book us for events.">
+
+  <!-- Tells search engines who wrote/owns the content. Minor SEO signal, still good practice. -->
+  <meta name="author" content="Golden Crust Bakery & Café">
+
+  <!--
+    Canonical URL: tells search engines "this is the ONE true
+    address for this page", even if it can also be reached through
+    other URLs (with tracking parameters, http vs https, etc.).
+    This prevents Google from seeing duplicate content.
+    Replace with your real domain when you deploy the site.
+  -->
+  <link rel="canonical" href="https://www.goldencrustbakery.example/">
+
+  <!--
+    Open Graph tags control how the page looks when it's SHARED
+    on Facebook, WhatsApp, LinkedIn, etc. (image + title + blurb).
+    "og:" tags are a Facebook-created standard most platforms copy.
+  -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Golden Crust Bakery & Café">
+  <meta property="og:description" content="Fresh sourdough, pastries and coffee — baked daily in Accra.">
+  <meta property="og:image" content="https://www.goldencrustbakery.example/images/storefront.jpg">
+  <meta property="og:url" content="https://www.goldencrustbakery.example/">
+
+  <!-- Twitter/X uses its own similar tag set. -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Golden Crust Bakery & Café">
+  <meta name="twitter:description" content="Fresh sourdough, pastries and coffee — baked daily in Accra.">
+
+  <!--
+    4) STRUCTURED DATA (JSON-LD)
+    This block is invisible to visitors but VERY valuable for SEO.
+    It tells Google, in a strict machine-readable format, exactly
+    what kind of business this is, so Google can show rich results
+    (opening hours, star rating, map pin) directly in search.
+    schema.org is the shared vocabulary every search engine reads.
+  -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Bakery",
+    "name": "Golden Crust Bakery & Café",
+    "image": "https://www.goldencrustbakery.example/images/storefront.jpg",
+    "telephone": "+233-000-0000",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "12 Baker Street",
+      "addressLocality": "Accra",
+      "addressCountry": "GH"
+    },
+    "openingHours": "Mo-Sa 07:00-19:00",
+    "servesCuisine": "Bakery, Café",
+    "priceRange": "$$"
+  }
+  </script>
+
+  <!--
+    5) LINKING THE STYLESHEET
+    This must go in <head> so the browser loads the CSS BEFORE it
+    paints any content — otherwise visitors briefly see an
+    unstyled page (a flash of raw HTML).
+  -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!--
+    6) WEB FONTS
+    We load two Google Fonts: "Fraunces" (a characterful serif for
+    headings) and "Work Sans" (a clean sans-serif for body text).
+    Pairing a display face with a body face is a classic, simple
+    way to give a site personality without extra design work.
+    preconnect speeds up the font download by starting the
+    connection to Google's font servers early.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Small icon shown in the browser tab. -->
+  <link rel="icon" href="data:,">
+</head>
+<body>
+
+  <!--
+    ============================================================
+    HEADER / NAVIGATION
+    ============================================================
+    We wrap the logo + nav in <header> because it's the
+    introductory content for the whole page. <nav> is its own
+    landmark element — screen readers announce it as "navigation",
+    which matters for accessibility (and accessibility overlaps
+    a lot with good SEO: both reward clear, well-labelled markup).
+  -->
+  <header class="site-header">
+    <div class="container header-inner">
+
+      <a href="#top" class="logo" aria-label="Golden Crust Bakery & Café — home">
+        Golden Bakery
+      </a>
+
+      <!--
+        The hamburger button is ONLY meaningful on small screens
+        (CSS hides the full nav and shows this button instead).
+        aria-expanded starts "false" and our JavaScript flips it
+        to "true" when the menu opens — that's how screen readers
+        know the current state of the menu.
+      -->
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="primaryNav">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <!--
+        This is our primary site navigation. Using a <ul> of links
+        (instead of plain <div><a>) is the semantically correct
+        pattern for a list of navigation choices.
+      -->
+      <nav id="primaryNav" class="primary-nav">
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+          <li><a href="#contact" class="nav-cta">Contact Us</a></li>
+        </ul>
+      </nav>
+
+    </div>
+  </header>
+
+  <!--
+    ============================================================
+    MAIN CONTENT
+    ============================================================
+    Everything that is unique to THIS page (not repeated site-wide
+    like the header/footer) belongs inside <main>. There should
+    only ever be one <main> per page — it's another accessibility
+    landmark, and it helps search engines find your real content
+    fast instead of wading through navigation links first.
+  -->
+  <main id="top">
+
+    <!--
+      HERO SECTION
+      The hero is the first thing a visitor sees, so it carries
+      the single most important message: what this business is
+      and what we want the visitor to do next (the "call to
+      action" button). Notice there is only ONE <h1> on the whole
+      page — that's a real SEO rule, not just a style choice.
+      Search engines treat <h1> as the page's main topic.
+    -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <p class="eyebrow">Baked with Love & Perfection</p>
+          <h1>Real cakes, made slowly, sold warm.</h1>
+          <p class="hero-lede">
+            Golden Bakery is a neighbourhood bakery and café in Accra.
+            We mill, mix and bake yummy cakes in full view of the counter —
+            no shortcuts, no preservatives, just good flour and time.
+          </p>
+          <div class="hero-actions">
+            <a href="#menu" class="btn btn-primary">See today's menu</a>
+            <a href="#contact" class="btn btn-secondary">Visit us</a>
+          </div>
+        </div>
+
+        <!--
+          Every <img> needs meaningful "alt" text. It's read aloud
+          by screen readers for visually impaired visitors, it's
+          what shows if the image fails to load, AND search
+          engines use it to understand image content (Google
+          Image Search relies on alt text almost entirely).
+        -->
+        <div class="hero-image">
+          <img src="images/stephen-wheeler-LRIQuZyxKRM-unsplash.jpg"
+            alt="Fresh cake cooling on a wooden rack"
+            width="800" height="600"
+            loading="eager">
+        </div>
+      </div>
+    </section>
+
+    <!--
+      ABOUT SECTION
+      Plain content section. Notice the heading hierarchy: this
+      page's structure is h1 (once, in the hero) -> h2 (each
+      section title) -> h3 (sub-items inside a section). Never
+      skip a level (e.g. h2 straight to h4) — it confuses both
+      screen readers and search engine crawlers about your
+      content's outline.
+    -->
+    <section id="about" class="about">
+      <div class="container about-inner">
+        <div class="about-image">
+          <img
+            src="images/owen-bruce-hcET0JIGXoI-unsplash.jpg"
+            alt="Baker shaping cakes by hand in the Golden Bakery kitchen"
+            width="700" height="500"
+            loading="lazy">
+        </div>
+        <div class="about-text">
+          <p class="eyebrow">Our story</p>
+          <h2>Started with one oven and a Saturday market stall.</h2>
+          <p>
+            Golden Bakery opened in 2014 as a single home oven and a
+            weekend stall at the local market. Word spread about the
+            bakery very fast, and by 2018 it had become bigger cakeshop that people buy cakes from during anniversary.
+            Today the same starter culture from that first
+            batch still leavens every loaf we bake.
+          </p>
+          <ul class="about-points">
+            <li>Locally sourced flour, milled weekly</li>
+            <li>No additives or preservatives, ever</li>
+            <li>Fresh batches baked three times a day</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!--
+      MENU / SERVICES SECTION
+      A CSS Grid of "cards" is one of the most common real-world
+      layout patterns — product grids, blog listings, team pages,
+      pricing tables. Learning it once here means you can reuse
+      the pattern anywhere.
+    -->
+    <section id="menu" class="menu">
+      <div class="container">
+        <p class="eyebrow center">What we bake</p>
+        <h2 class="center">Today's favourites</h2>
+
+        <div class="menu-grid">
+
+          <article class="menu-card">
+            <img
+              src="images/alina-grubnyak-aYct7JzXLAg-unsplash.jpg"
+              alt="Sliced Funnel Cakes"
+              width="500" height="350"
+              loading="lazy">
+            <h3>Classic Funnel Cakes</h3>
+            <p>A 24-hour fermented Cake with a crackling crust and open crumb.</p>
+            <p class="price">GH₵ 35</p>
+          </article>
+
+          <article class="menu-card">
+            <img
+              src="images/annie-spratt-6SHd7Q-l1UQ-unsplash.jpg"
+              alt="Assorted butter cakes"
+              width="500" height="350"
+              loading="lazy">
+            <h3>Assorted Butter cakes</h3>
+            <p>Laminated by hand, baked to order in small batches each morning.</p>
+            <p class="price">GH₵ 18</p>
+          </article>
+
+          <article class="menu-card">
+            <img
+              src="images/anita-austvika--YzHEqxAS2o-unsplash.jpg"
+              alt="Cup of pour-over coffee on a wooden table"
+              width="500" height="350"
+              loading="lazy">
+            <h3>Berries On Cakes</h3>
+            <p>Assorted berries on a white baked cake.</p>
+            <p class="price">GH₵ 15</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!--
+      TESTIMONIALS SECTION
+      Real customer quotes build trust ("social proof"). Using
+      <blockquote> + <cite> is the semantically correct HTML for
+      quoting someone, rather than a plain <p>.
+    -->
+    <section id="testimonials" class="testimonials">
+      <div class="container">
+        <p class="eyebrow center">Reviews</p>
+        <h2 class="center">What our neighbours say</h2>
+
+        <div class="testimonial-grid">
+          <blockquote class="testimonial">
+            <p>"Best yummy cake I've had in Accra, hands down. I now walk past two other bakeries to get here."</p>
+            <cite>— Ama K.</cite>
+          </blockquote>
+
+          <blockquote class="testimonial">
+            <p>"The berries on the white cake sells out by 9am for a reason. Get there early or call ahead."</p>
+            <cite>— Kojo A.</cite>
+          </blockquote>
+
+          <blockquote class="testimonial">
+            <p>"Small shop, huge care. You can tell the difference in every cake bite."</p>
+            <cite>— Efua D.</cite>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!--
+      CONTACT SECTION
+      This form doesn't actually submit anywhere (there's no
+      backend in this teaching example) — script.js intercepts
+      the submit event, checks the fields, and shows a confirmation
+      message instead. In a real project you'd point the <form>
+      at a server endpoint or a form service.
+
+      Notice every <input> has a matching <label for="..."> —
+      that's required for accessibility (screen readers announce
+      the label when the field is focused) and it also gives
+      visitors a bigger, easier click/tap target.
+    -->
+    <section id="contact" class="contact">
+      <div class="container contact-inner">
+        <div class="contact-info">
+          <p class="eyebrow">Get in touch</p>
+          <h2>Visit, call, or send a message.</h2>
+          <address>
+            12 Baker Street, Accra<br>
+            <a href="tel:+233000000000">+233208222239</a><br>
+            <a href="mailto:hello@goldencrustbakery.example">surgeon9us@gmail.com</a>
+          </address>
+          <p class="hours"><strong>Hours:</strong> Mon–Sat, 7:00 AM – 7:00 PM</p>
+        </div>
+
+        <form id="contactForm" class="contact-form" novalidate>
+          <div class="form-field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+            <span class="field-error" id="nameError"></span>
+          </div>
+
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <span class="field-error" id="emailError"></span>
+          </div>
+
+          <div class="form-field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+            <span class="field-error" id="messageError"></span>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Send message</button>
+
+          <!--
+            aria-live="polite" tells screen readers to announce
+            changes to this element automatically — so when JS
+            inserts a success/error message, it gets read aloud
+            without the visitor needing to move focus there.
+          -->
+          <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!--
+    ============================================================
+    FOOTER
+    ============================================================
+  -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="currentYear"></span> Golden Bakery &amp; Café. All rights reserved.</p>
+      <a href="#top" class="back-to-top" id="backToTop">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <!--
+    7) LOADING JAVASCRIPT
+    Script tags go at the END of <body>, right before it closes.
+    That way the browser has already built the whole page (the
+    "DOM") before our JS runs and tries to find elements on it —
+    if we loaded script.js up in <head>, most of these
+    document.getElementById() calls below would fail because
+    those elements wouldn't exist yet.
+  -->
+  <script src="script.js"></script>
+</body>
+</html>
